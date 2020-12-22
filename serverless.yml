@@ -1,3 +1,6 @@
+# serverless.ymlのリファレンス
+# https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
+
 service: aoyama-slstest1222
 
 frameworkVersion: '2'
@@ -8,10 +11,12 @@ provider:
   stage: dev
   region: ap-northeast-1
   logs:
-    # API Gatewayの実行ログとアクセスログを有効にする
-    restApi: true
+    restApi: true  # API Gatewayの実行ログとアクセスログを有効にする
+  logRetentionInDays: 30  # ログの保持期間。指定できる値が限られているので注意。https://qiita.com/koshilife/items/cca9b38ee999bd672da2
   environment:
     TZ: Asia/Tokyo
+  memorySize: 2048
+  timeout: 30
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -28,7 +33,6 @@ provider:
 #          - - "arn:aws:s3:::"
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
-
 # you can add packaging information here
 #package:
 #  include:
@@ -40,17 +44,21 @@ provider:
 
 functions:
   bye:
+    description: GET /bye
     handler: bye/index.handler
     events:
       - http:
           path: bye
           method: get
+          cors: true
   hello:
+    description: GET /hello
     handler: handler.hello
     events:
       - http:
           path: hello
           method: get
+          cors: true
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
@@ -95,3 +103,9 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+resources:
+  # serverlessの値への参照はParametersで解決する。
+  Parameters:
+    LogRetentionInDays:
+      Type: Number
+      Default: 30
