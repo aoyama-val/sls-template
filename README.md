@@ -1,5 +1,12 @@
 # Serverless Frameworkのテンプレ
 
+## セットアップ
+
+```
+npm install -g serverless
+npm install
+```
+
 ## デプロイ
 
 ```
